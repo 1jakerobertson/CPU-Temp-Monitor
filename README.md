@@ -1,30 +1,61 @@
 # CPU Temperature Monitor
 
-## Project Description
+A Raspberry Pi Pico project that reads the internal CPU temperature and displays it on a 16x2 I2C LCD in real time, built using the Pico C SDK.
 
-This project implements a CPU temperature monitor using the Raspberry Pi Pico microcontroller and an I2C LCD display. The device reads the internal temperature sensor of the Pico and displays it on the LCD screen in real-time.
+## Features
+- Reads internal CPU temperature via ADC
+- Displays live temperature on a 16x2 I2C LCD
+- Serial monitor output for debugging
 
-## Wiring Diagram
+## Hardware
+- Raspberry Pi Pico
+- 16x2 I2C LCD (IIC LCD1602)
+- Breadboard and jumper wires
 
-Connect the I2C LCD display to the Raspberry Pi Pico as follows:
+## Wiring
 
-- LCD VCC → Pico 3.3V
-- LCD GND → Pico GND
-- LCD SDA → Pico GPIO 4 (I2C0 SDA)
-- LCD SCL → Pico GPIO 5 (I2C0 SCL)
+| LCD Pin | Pico Pin |
+|---------|----------|
+| GND     | GND (Pin 38) |
+| VCC     | VBUS 5V (Pin 40) |
+| SDA     | GP4 (Pin 6) |
+| SCL     | GP5 (Pin 7) |
 
-## How to Build and Flash
+> Note: I2C address is 0x27
 
-1. Ensure you have the Pico SDK installed and configured.
-2. Open the project in VS Code with the Pico extension.
-3. Run the "Compile Project" task to build the firmware.
-4. Flash the firmware using the "Flash" task or "Run Project" task.
+## Dependencies
+- Pico SDK 2.2.0
+- CMake 3.13+
+- Ninja build system
+- arm-none-eabi-gcc toolchain
 
-## Serial Monitor Setup
+## Build
 
-To monitor the serial output:
+```bash
+# Configure
+cmake -S . -B build
 
-1. Connect the Pico to your computer via USB.
-2. Use a serial monitor tool like `minicom`, `screen`, or the Arduino IDE serial monitor.
-3. Set the baud rate to 115200.
-4. The device will output temperature readings over serial.
+# Build
+cmake --build build
+```
+
+## Flash
+
+Put Pico in BOOTSEL mode then:
+```bash
+copy build\project_files.uf2 E:\
+```
+
+Or if already running:
+```bash
+picotool reboot -f -u
+copy build\project_files.uf2 E:\
+```
+
+## Serial Monitor
+- Baud rate: 115200
+- Open serial monitor in VS Code
+- Shows temperature readings and loop iterations
+
+## License
+MIT
