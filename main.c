@@ -100,17 +100,34 @@ int main() {
     printf("LCD initialized\n");
 
     int count = 0;
+    int show_fahrenheit = 0;  // toggle flag
     char buf[16];
-    while (1) {
-        float temp = read_temperature();
-        printf("Temp: %.2f C, Loop: %d\n", temp, count++);
 
-        lcd_clear();
+    while (1) {
+        float temp_c = read_temperature();
+        float temp_f = (temp_c * 9.0f / 5.0f) + 32.0f;
+
+        printf("Loop: %d | C: %.2f | F: %.2f\n", count, temp_c, temp_f);
+
+        // Only clear second line instead of whole screen (smoother)
+        lcd_set_cursor(1, 0);
+        lcd_string("                ");
+
         lcd_set_cursor(0, 0);
         lcd_string("CPU Temp:");
+
         lcd_set_cursor(1, 0);
-        snprintf(buf, sizeof(buf), "%.2f C", temp);
+
+        if (show_fahrenheit) {
+            snprintf(buf, sizeof(buf), "%.2f F", temp_f);
+        } else {
+            snprintf(buf, sizeof(buf), "%.2f C", temp_c);
+        }
+
         lcd_string(buf);
+
+        show_fahrenheit = !show_fahrenheit;  // alternate
+        count++;
 
         sleep_ms(1000);
     }
